@@ -79,7 +79,7 @@ const HeroSection = () => {
                             mt: 1,
                         }}
                     >
-                        Whether it's a tech talk, art exhibit, or fitness challenge — find the perfect event that suits your passion and make new connections.
+                        Whether it&apos;s a tech talk, art exhibit, or fitness challenge — find the perfect event that suits your passion and make new connections.
                     </Typography>
                 </Box>
             </Box>
@@ -150,7 +150,7 @@ const HeroSection = () => {
                             />
                             <Typography variant="h6">John Doe</Typography>
                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                The platform is incredibly easy to use. I've joined numerous events and learned so much. The notifications keep me updated.
+                                The platform is incredibly easy to use. I have joined numerous events and learned so much. The notifications keep me updated.
                             </Typography>
                         </Box>
 
@@ -221,7 +221,7 @@ const HeroSection = () => {
                         }}
 
                         >
-                            Whether you’re hosting or attending, our platform is designed to help you find the perfect event and make the most out of it.
+                            Whether you&rsquo;re hosting or attending, our platform is designed to help you find the perfect event and make the most out of it.
                         </Typography>
                         <NextLink href="/events" passHref>
                             <Button

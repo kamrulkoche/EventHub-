@@ -1,9 +1,21 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
-import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography, Card, CardContent, CardActions, Box } from '@mui/material';
+import {
+  TextField,
+  Button,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Typography,
+  Card,
+  CardContent,
+  CardActions,
+  Box,
+  SelectChangeEvent,
+} from '@mui/material';
 
 const MyEventPage = () => {
-  // Event data (10 more events added)
   const [events, setEvents] = useState([
     {
       id: 1,
@@ -133,28 +145,25 @@ const MyEventPage = () => {
     }
   ]);
 
-  // Search and Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
 
-  // Handle search query change
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  // Handle filter change
-  const handleFilterChange = (event) => {
+  const handleFilterChange = (event: SelectChangeEvent) => {
     setFilter(event.target.value);
   };
 
-  // Handle "Join Event" button click
-  const handleJoinEvent = (eventId) => {
-    setEvents(events.map(event => 
-      event.id === eventId ? { ...event, attendeeCount: event.attendeeCount + 1 } : event
+  const handleJoinEvent = (eventId: number) => {
+    setEvents(events.map(event =>
+      event.id === eventId
+        ? { ...event, attendeeCount: event.attendeeCount + 1 }
+        : event
     ));
   };
 
-  // Filter events based on search query and filter
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase());
     if (filter === 'all') return matchesSearch;
@@ -165,9 +174,7 @@ const MyEventPage = () => {
     <div style={{ paddingTop: '120px' }}>
       <Typography variant="h4" gutterBottom>Manage My Events</Typography>
 
-      {/* Container for Search and Filter (Side by Side) */}
       <Box display="flex" gap={2} style={{ marginBottom: '20px' }}>
-        {/* Search Bar */}
         <TextField
           label="Search by Event Title"
           variant="outlined"
@@ -176,7 +183,6 @@ const MyEventPage = () => {
           onChange={handleSearchChange}
         />
 
-        {/* Filter Dropdown */}
         <FormControl fullWidth>
           <InputLabel>Filter by Date</InputLabel>
           <Select
@@ -185,24 +191,23 @@ const MyEventPage = () => {
             label="Filter by Date"
           >
             <MenuItem value="all">All Events</MenuItem>
-            <MenuItem value="today">Today's Events</MenuItem>
+            <MenuItem value="today">Today Events</MenuItem>
             <MenuItem value="thisWeek">This Week</MenuItem>
             <MenuItem value="lastMonth">Last Month</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {/* Display Event Cards using Box */}
       <Box display="flex" flexWrap="wrap" gap={2}>
         {filteredEvents.map((event) => (
           <Box key={event.id} flexBasis="calc(33.33% - 16px)" mb={2}>
             <Card
               sx={{
-                boxShadow: 3, // Add shadow for card
-                borderRadius: 2, // Rounded corners
-                transition: 'transform 0.3s ease-in-out', // Smooth hover effect
+                boxShadow: 3,
+                borderRadius: 2,
+                transition: 'transform 0.3s ease-in-out',
                 '&:hover': {
-                  transform: 'scale(1.05)', // Card zooms in on hover
+                  transform: 'scale(1.05)',
                 },
               }}
             >
@@ -219,7 +224,7 @@ const MyEventPage = () => {
                   size="small"
                   color="primary"
                   onClick={() => handleJoinEvent(event.id)}
-                  disabled={event.attendeeCount >= 100} // Assuming max limit is 100
+                  disabled={event.attendeeCount >= 100}
                   sx={{ fontWeight: 'bold' }}
                 >
                   Join Event

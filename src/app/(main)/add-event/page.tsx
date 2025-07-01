@@ -18,13 +18,13 @@ const AddEventPage = () => {
     const [error, setError] = useState('');
 
     // Handle form data changes
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setEventData({ ...eventData, [name]: value });
     };
 
     // Handle submit event
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!eventData.title || !eventData.postedBy || !eventData.date || !eventData.location || !eventData.description) {
             setError("Please fill out all the fields.");

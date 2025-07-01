@@ -17,7 +17,6 @@ import { usePathname } from 'next/navigation';
 import NextLink from 'next/link';
 import Image from 'next/image';
 
-
 const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Events', href: '/events' },
@@ -30,7 +29,7 @@ const navLinks = [
 const Header = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [loggedIn, setLoggedIn] = useState(true); // Assume user is logged in for demo
-    const [username, setUsername] = useState('John Doe');
+    const username = 'John Doe'; // Removed setUsername since it's unused
     const pathname = usePathname();
     const activeColor = '#F37021';
 
@@ -40,6 +39,13 @@ const Header = () => {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        setLoggedIn(false);
+        setAnchorEl(null);
+        alert('Logging out...');
+        // You can also add redirect logic here if needed
     };
 
     const isActive = (href: string) => {
@@ -87,7 +93,7 @@ const Header = () => {
                                 width={100}
                                 height={50}
                                 style={{ cursor: 'pointer' }}
-                                priority // Optional, use if the image is critical for the page load
+                                priority
                             />
                         </NextLink>
                     </Box>
@@ -128,7 +134,7 @@ const Header = () => {
                                     onClose={handleMenuClose}
                                 >
                                     <MenuItem disabled>{username}</MenuItem>
-                                    <MenuItem onClick={() => alert('Logging out...')}>Logout</MenuItem>
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                                 </Menu>
                             </Box>
                         )}
