@@ -170,7 +170,7 @@ const HeroSection = () => {
             </Box>
 
 
-            {/* Background Section with backgroundColor instead of backgroundImage */}
+           
             <Box
                 sx={{
                     position: 'relative',

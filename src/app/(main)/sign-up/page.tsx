@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
-import theme from '@/app/style/theme';
+import React, { useState } from "react";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import theme from "@/app/style/theme";
+import { toast, ToastContainer } from "react-toastify";  // Import react-toastify
+import "react-toastify/dist/ReactToastify.css";  // Import styles for toast
 
 interface FormDataType {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
-  photoURL: File | null;
+  photoURL: string;
 }
 
 interface ErrorsType {
@@ -21,114 +23,137 @@ interface ErrorsType {
 }
 
 const RegistrationPage = () => {
-  // State variables for form data with explicit types
   const [formData, setFormData] = useState<FormDataType>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    photoURL: null,
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    photoURL: "",
   });
 
   const [errors, setErrors] = useState<ErrorsType>({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    photoURL: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    photoURL: "",
   });
 
-  // Handle input change for text fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle file input change
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFormData((prev) => ({ ...prev, photoURL: e.target.files![0] }));
-    }
-  };
-
-  // Form submission handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validationErrors: ErrorsType = { ...errors };
     let valid = true;
 
     if (!formData.name.trim()) {
-      validationErrors.name = 'Name is required';
+      validationErrors.name = "Name is required";
       valid = false;
     } else {
-      validationErrors.name = '';
+      validationErrors.name = "";
     }
 
     const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (!formData.email || !emailPattern.test(formData.email)) {
-      validationErrors.email = 'Valid email is required';
+      validationErrors.email = "Valid email is required";
       valid = false;
     } else {
-      validationErrors.email = '';
+      validationErrors.email = "";
     }
 
     if (!formData.password || formData.password.length < 6) {
-      validationErrors.password = 'Password must be at least 6 characters long';
+      validationErrors.password = "Password must be at least 6 characters long";
       valid = false;
     } else {
-      validationErrors.password = '';
+      validationErrors.password = "";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      validationErrors.confirmPassword = 'Passwords do not match';
+      validationErrors.confirmPassword = "Passwords do not match";
       valid = false;
     } else {
-      validationErrors.confirmPassword = '';
+      validationErrors.confirmPassword = "";
     }
 
-    if (!formData.photoURL) {
-      validationErrors.photoURL = 'Photo is required';
+    if (!formData.photoURL.trim()) {
+      validationErrors.photoURL = "Photo URL is required";
       valid = false;
     } else {
-      validationErrors.photoURL = '';
+      validationErrors.photoURL = "";
     }
 
     setErrors(validationErrors);
 
     if (valid) {
-      // Submit your form data here (e.g., send to backend)
-      console.log('Form data:', formData);
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        photoUrl: formData.photoURL, // Match backend key
+      };
+
+      try {
+        const response = await fetch(
+          "https://de-event-management-server.vercel.app/api/auth/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Show success toast
+          toast.success("Registration successful! Redirecting to login...");
+
+          // For example, redirect to login page:
+          setTimeout(() => {
+            window.location.href = "/sign-in";
+          }, 2000); // Delay redirect to allow the toast to show
+        } else {
+          // Handle error, e.g., show error message
+          console.log("Error:", data.message);
+        }
+      } catch (error) {
+        console.error("Request failed:", error);
+      }
     }
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
       }}
     >
       <Container maxWidth="sm">
         <Box
           sx={{
-            backgroundColor: 'white',
-            padding: '3rem',
-            borderRadius: '12px',
-            boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.1)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            backgroundColor: "white",
+            padding: "3rem",
+            borderRadius: "12px",
+            boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
-          <Typography variant="h4" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4 }}>
+          <Typography variant="h4" sx={{ fontWeight: "bold", textAlign: "center", mb: 4 }}>
             Create an Account
           </Typography>
 
           <form onSubmit={handleSubmit}>
-            {/* Name Field */}
             <TextField
               fullWidth
               label="Name"
@@ -142,7 +167,6 @@ const RegistrationPage = () => {
               sx={{ mb: 3 }}
             />
 
-            {/* Email Field */}
             <TextField
               fullWidth
               label="Email"
@@ -156,7 +180,6 @@ const RegistrationPage = () => {
               sx={{ mb: 3 }}
             />
 
-            {/* Password Field */}
             <TextField
               fullWidth
               label="Password"
@@ -171,7 +194,6 @@ const RegistrationPage = () => {
               sx={{ mb: 3 }}
             />
 
-            {/* Confirm Password Field */}
             <TextField
               fullWidth
               label="Confirm Password"
@@ -186,51 +208,30 @@ const RegistrationPage = () => {
               sx={{ mb: 3 }}
             />
 
-            {/* Photo URL Field with file upload */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <Box sx={{ flex: 1 }}>
-                <TextField
-                  fullWidth
-                  label="Photo URL"
-                  variant="outlined"
-                  margin="normal"
-                  name="photoURL"
-                  value={formData.photoURL ? formData.photoURL.name : ''}
-                  disabled
-                  error={!!errors.photoURL}
-                  helperText={errors.photoURL}
-                />
-              </Box>
-              <Box sx={{ ml: 2 }}>
-                <Button
-                  variant="contained"
-                  component="label"
-                  sx={{
-                    backgroundColor: '#F37021',
-                    '&:hover': { backgroundColor: '#E46016' },
-                    color: 'white',
-                    textTransform: 'none',
-                    padding: '12px 20px',
-                  }}
-                >
-                  Upload Photo
-                  <input type="file" accept="image/*" hidden onChange={handleFileChange} />
-                </Button>
-              </Box>
-            </Box>
+            <TextField
+              fullWidth
+              label="Photo URL"
+              variant="outlined"
+              margin="normal"
+              name="photoURL"
+              value={formData.photoURL}
+              onChange={handleChange}
+              error={!!errors.photoURL}
+              helperText={errors.photoURL}
+              sx={{ mb: 3 }}
+            />
 
-            {/* Submit Button */}
             <Button
               type="submit"
               sx={{
                 color: theme.palette.custom.fifth.white,
-                fontWeight: 'bold',
-                width: '100%',
-                marginTop: '1rem',
-                backgroundColor: '#F37021',
-                '&:hover': { backgroundColor: '#E46016' },
-                padding: '12px 0',
-                textTransform: 'none',
+                fontWeight: "bold",
+                width: "100%",
+                marginTop: "1rem",
+                backgroundColor: "#F37021",
+                "&:hover": { backgroundColor: "#E46016" },
+                padding: "12px 0",
+                textTransform: "none",
               }}
             >
               Register
@@ -239,25 +240,28 @@ const RegistrationPage = () => {
 
           <Typography
             sx={{
-              textAlign: 'center',
-              marginTop: '1rem',
+              textAlign: "center",
+              marginTop: "1rem",
               color: theme.palette.text.secondary,
             }}
           >
-            Have an account?{' '}
+            Have an account?{" "}
             <Button
               sx={{
-                textTransform: 'none',
+                textTransform: "none",
                 padding: 0,
                 color: theme.palette.primary.main,
               }}
-              onClick={() => (window.location.href = '/sign-in')}
+              onClick={() => (window.location.href = "/sign-in")}
             >
               Login here
             </Button>
           </Typography>
         </Box>
       </Container>
+
+      {/* Toast Container for success messages */}
+      <ToastContainer position="top-center" autoClose={5000} hideProgressBar />
     </Box>
   );
 };

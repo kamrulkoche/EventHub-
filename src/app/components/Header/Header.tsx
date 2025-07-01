@@ -2,34 +2,33 @@
 
 import theme from '@/app/style/theme';
 import {
+    Avatar,
     Box,
     Container,
-    Stack,
-    Link,
     IconButton,
+    Link,
     Menu,
     MenuItem,
-    Avatar,
+    Stack,
 } from '@mui/material';
-import { useState } from 'react';
-import logo from '../../assets/SquadroSoft_banner_df0ucp.png';
-import { usePathname } from 'next/navigation';
-import NextLink from 'next/link';
 import Image from 'next/image';
+import NextLink from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import logo from '../../assets/SquadroSoft_banner_df0ucp.png';
 
 const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Events', href: '/events' },
     { label: 'Add Event', href: '/add-event' },
     { label: 'My Event', href: '/my-event' },
-    { label: 'Sign In', href: '/sign-in' },
-    { label: 'Sign Up', href: '/sign-up' },
+
 ];
 
 const Header = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [loggedIn, setLoggedIn] = useState(true); // Assume user is logged in for demo
-    const username = 'John Doe'; // Removed setUsername since it's unused
+    const [loggedIn, setLoggedIn] = useState(true);
+    const username = 'John Doe';
     const pathname = usePathname();
     const activeColor = '#F37021';
 
@@ -42,15 +41,29 @@ const Header = () => {
     };
 
     const handleLogout = () => {
+        // Remove the token cookie
+        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+
         setLoggedIn(false);
         setAnchorEl(null);
         alert('Logging out...');
-        // You can also add redirect logic here if needed
     };
 
     const isActive = (href: string) => {
         return href === pathname;
     };
+
+    useEffect(() => {
+        const token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('token='))
+            ?.split('=')[1];
+        if (token) {
+            setLoggedIn(true);
+        } else {
+            setLoggedIn(false);
+        }
+    }, []);
 
     return (
         <Box
@@ -120,6 +133,37 @@ const Header = () => {
                                     {link.label}
                                 </Link>
                             ))}
+
+                            {!loggedIn && (
+                                <>
+                                    <Link
+                                        key={"sign-in"}
+                                        component={NextLink}
+                                        href={"/sign-in"}
+                                        underline="none"
+                                        sx={{
+                                            fontWeight: isActive("/sign-in") ? 'bold' : 'medium',
+                                            color: isActive("/sign-in") ? activeColor : 'text.primary',
+                                            transition: 'color 0.3s',
+                                        }}
+                                    >
+                                        {"Sign-in"}
+                                    </Link>
+                                    <Link
+                                        key={"sign-up"}
+                                        component={NextLink}
+                                        href={"/sign-up"}
+                                        underline="none"
+                                        sx={{
+                                            fontWeight: isActive("/sign-up") ? 'bold' : 'medium',
+                                            color: isActive("/sign-up") ? activeColor : 'text.primary',
+                                            transition: 'color 0.3s',
+                                        }}
+                                    >
+                                        {"Sign-up"}
+                                    </Link>
+                                </>
+                            )}
                         </Stack>
 
                         {/* Profile Avatar and Menu */}
